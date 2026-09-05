@@ -7,10 +7,108 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Step 0: prove the database is wired.
-// Full catalog, wallet, orders, and audit models come in later steps.
-model SetupCheck {
-  id        Int      @id @default(autoincrement())
-  label     String
-  createdAt DateTime @default(now())
+model Merchant {
+  id          Int       @id @default(autoincrement())
+  name        String
+  slug        String    @unique
+  description String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+}
+
+model Product {
+  id             Int      @id @default(autoincrement())
+  merchantId     Int
+  name           String
+  slug           String   @unique
+  description    String
+  category       String
+  priceInPaise   Int
+  currency       String   @default("INR")
+  stockQuantity  Int
+  imageUrl       String?
+  tags           String
+  relatedProducts String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  merchant       Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  purchaseHistory PurchaseHistory[]
+}
+
+model User {
+  id              Int               @id @default(autoincrement())
+  name            String
+  email           String            @unique
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  preferences     UserPreference[]
+  purchaseHistory PurchaseHistory[]
+  wallet           Wallet?
+}
+
+model UserPreference {
+  id              Int    @id @default(autoincrement())
+  userId          Int
+  preferenceKey   String
+  preferenceValue String
+
+  user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, preferenceKey])
+}
+
+model PurchaseHistory {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  productId      Int
+  quantity       Int
+  priceInPaise   Int
+  purchasedAt    DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Wallet {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @unique
+  balanceInPaise Int     @default(500000)
+  currency      String   @default("INR")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  WalletTransaction[]
+}
+
+model WalletTransaction {
+  id             Int      @id @default(autoincrement())
+  walletId       Int
+  type           String
+  amountInPaise  Int
+  balanceBefore  Int
+  balanceAfter   Int
+  status         String
+  description    String
+  referenceId    String?
+  createdAt      DateTime @default(now())
+
+  wallet         Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  timestamp   DateTime @default(now())
+  eventType   String
+  actor       String
+  userId      Int?
+  productId   Int?
+  amountInPaise Int?
+  referenceId String?
+  result      String
+  explanation String
+  createdAt   DateTime @default(now())
 }

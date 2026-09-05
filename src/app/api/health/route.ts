@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 
 export async function GET() {
   try {
-    const checks = await prisma.setupCheck.count();
+    const checks = await prisma.product.count();
     return NextResponse.json({
       ok: true,
       database: "connected",
