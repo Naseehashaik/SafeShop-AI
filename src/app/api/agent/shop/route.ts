@@ -104,7 +104,7 @@ IMPORTANT RULES:
 1. Recommend ONLY products from the provided catalog.
 2. Never invent products, prices, merchants, ratings, specifications, or stock.
 3. Consider the user's request, preferences, and purchase history.
-4. Prefer products that match the user's budget and requirements.
+4. Prefer products that match the user's requirements. Treat the user's saved typical_budget only as a soft preference when no budget is stated in the current message. Do not exclude products solely because they are above the saved typical_budget.
 5. If the user gives a maximum budget, do not recommend products above it.
 6. Explain briefly why your recommendation is suitable.
 7. When several products satisfy the request, choose the best overall match rather than simply choosing the cheapest or the product with the highest specification.
@@ -117,6 +117,7 @@ IMPORTANT RULES:
 14. Keep the response simple and beginner-friendly.
 15. If the user asks about a specific product by name (for example, "Do you have ProBook 15 Laptop?"), treat it as a product availability/information question. Do NOT apply the user's typical budget unless the user explicitly gives a budget in the current message. Look up the named product in the catalog and answer using the catalog's actual price, stock, and merchant information.
 16. If the user's current message contains the name of a specific product from the catalog (for example, "ProBook 15 Laptop"), treat that named product as the requested product even if the user uses phrases such as "I need", "I want", "show me", or "find me". Look up that exact product in the catalog and do NOT apply the user's typical budget unless the user explicitly gives a budget in the current message. Return the product's actual catalog price, merchant, stock status, and relevant details.
+17. If the user asks for a product category without giving a budget, such as "I need a laptop" or "show me headphones", recommend suitable available products from that category regardless of the user's saved typical_budget. The saved typical_budget must not become a hard maximum unless the user explicitly states a budget in the current message.
 
 Return valid JSON with exactly these fields:
 
@@ -171,7 +172,30 @@ Return valid JSON with exactly these fields:
      * The database remains the source of truth for product details.
      */
     const requestedText = message.toLowerCase();
+    const hasExplicitBudget =
+  /(?:under|below|less than|upto|up to|max|maximum|budget of|within)\s*₹?\s*\d+/i.test(
+    message
+  );
 
+if (!hasExplicitBudget && requestedText.includes("laptop")) {
+  const laptopProducts = products
+    .filter(
+      (product) =>
+        product.category.toLowerCase() === "laptops" &&
+        product.stockQuantity > 0
+    )
+    .sort((a, b) => a.priceInPaise - b.priceInPaise);
+
+  if (laptopProducts.length > 0) {
+    result.recommendations = [
+      {
+        productId: laptopProducts[0].id,
+        reason:
+          "This is an available laptop in the merchant catalog and matches your request.",
+      },
+    ];
+  }
+}
     if (
       requestedText.includes("headphone") &&
       requestedText.includes("college")
