@@ -59,6 +59,7 @@ export async function GET(request: NextRequest) {
         price: product.priceInPaise / 100,
         currency: "INR",
         stockQuantity: product.stockQuantity,
+        imageUrl: product.imageUrl,
         tags: product.tags?.split(",") || [],
         merchant: {
           id: product.merchant.id,
