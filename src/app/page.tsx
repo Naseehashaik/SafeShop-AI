@@ -153,7 +153,7 @@ export default function Home() {
       setRemainingBalance(data.wallet.remainingAfterPurchase);
 
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        key: data.razorpayKeyId,
         amount: data.order.amount,
         currency: data.order.currency,
         name: "SafeShop AI",

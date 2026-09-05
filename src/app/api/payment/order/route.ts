@@ -218,6 +218,7 @@ if (includeCase) {
       },
 
       order,
+      razorpayKeyId: process.env.RAZORPAY_KEY_ID,
     });
   } catch (error) {
     console.error("Razorpay order error:", error);
