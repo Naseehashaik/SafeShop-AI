@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Navigation from "@/components/Navigation";
 
 type AuditLog = {
   id: number;
@@ -51,6 +52,8 @@ export default function AuditPage() {
   }, []);
 
   return (
+    <> 
+    <Navigation current="audit" />
     <main
       style={{
         minHeight: "100vh",
@@ -271,7 +274,8 @@ export default function AuditPage() {
             </div>
           ))}
       </div>
-    </main>
+      </main>
+  </>
   );
 }
 

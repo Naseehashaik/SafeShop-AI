@@ -3,7 +3,7 @@
 import Script from "next/script";
 import { useEffect, useState } from "react";
 import SimulationBanner from "@/components/SimulationBanner";
-
+import Navigation from "@/components/Navigation";
 declare global {
   interface Window {
     Razorpay: any;
@@ -243,7 +243,41 @@ export default function Home() {
       />
 
       <div className="flex min-h-screen flex-col bg-zinc-50">
+      <nav className="border-b border-zinc-200 bg-white">
+  <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+    <a
+      href="/"
+      className="text-lg font-bold text-zinc-950"
+    >
+      SafeShop AI
+    </a>
+
+    <div className="flex items-center gap-5 text-sm font-medium">
+      <a
+        href="/"
+        className="text-zinc-700 hover:text-zinc-950"
+      >
+        🛍️ Shop
+      </a>
+
+      <a
+        href="/audit"
+        className="text-zinc-700 hover:text-zinc-950"
+      >
+        🧾 Audit Trail
+      </a>
+
+      <a
+        href="/merchant"
+        className="text-zinc-700 hover:text-zinc-950"
+      >
+        🏪 Merchant Dashboard
+      </a>
+    </div>
+  </div>
+</nav>
         <SimulationBanner />
+        <Navigation current="shop" />
 
         <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-6 py-16">
           <p className="text-sm font-medium uppercase tracking-wide text-zinc-500">

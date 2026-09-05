@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Navigation from "@/components/Navigation";
 
 type Product = {
   id: number;
@@ -84,6 +85,8 @@ export default function MerchantDashboard() {
   }
 
   return (
+   <> 
+    <Navigation current="merchant" />
     <main className="min-h-screen bg-zinc-50 p-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
@@ -197,6 +200,7 @@ export default function MerchantDashboard() {
           </section>
         </div>
       </div>
-    </main>
+      </main>
+  </>
   );
 }
